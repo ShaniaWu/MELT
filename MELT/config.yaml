@@ -1,0 +1,5 @@
+run:
+  project: 166
+  sample: 120948
+  MELT: "/hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/MELT.jar"
+  ref: "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/genomes/GRCh37d5/GRCh37d5.fa"

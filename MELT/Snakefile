@@ -1,0 +1,68 @@
+rule all:
+    input: 
+        expand("data/{project}_{sample}_chr22.bam.disc".format(project=config["run"]["project"], sample=config["run"]["sample"]))
+
+
+rule Preprocess:
+    input: 
+        bam = "data/{project}_{sample}_chr22.bam"
+    output: 
+        disc = "data/{project}_{sample}_chr22.bam.disc",
+        bai = "data/{project}_{sample}_chr22.bam.disc.bai",
+        fq = "data/{project}_{sample}_chr22.bam.fq"
+    params:
+        melt = config["run"]["MELT"],
+        ref = config["run"]["ref"]
+    conda: 
+        "envs/melt.yaml"
+    shell:
+        '''
+        java -jar {params.melt} Preprocess \
+        -bamfile {input.bam} \
+        -h {params.ref}
+        '''
+
+
+# java -jar /hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/MELT.jar Preprocess \
+# -bamfile /home/shania.wu/MELT/data/166_120948_chr22.bam \
+# -h /hpf/largeprojects/ccm_dccforge/dccdipg/Common/genomes/GRCh37d5/GRCh37d5.fa
+
+
+rule IndivAnalysis:
+    input: 
+        bam = "data/{project}_{sample}_chr22.bam"
+        disc = "data/{project}_{sample}_chr22.bam.disc"
+        bai = "data/{project}_{sample}_chr22.bam.disc.bai",
+        fq = "data/{project}_{sample}_chr22.bam.fq"
+    output: 
+        alu = "data/{project}_{sample}_chr22.ALU.aligned.final.sorted.bam"
+    params:
+        melt = config["run"]["MELT"],
+        ref = config["run"]["ref"]
+    conda: 
+        "envs/melt.yaml"
+    shell:
+        '''
+        java -jar {params.melt} IndivAnalysis \
+        -b hs37d5/NC_007605 \
+        -c 40 \
+        -h {params.ref} \
+        -bamfile {input.bam}\
+        -t /hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/me_refs/1KGP_Hg19/ALU_MELT.zip \
+        # change later for dif element types
+        -w ./data/
+        '''
+
+# java -jar /hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/MELT.jar IndivAnalysis \
+# -b hs37d5/NC_007605 \
+# -c 40 \
+# -h /hpf/largeprojects/ccm_dccforge/dccdipg/Common/genomes/GRCh37d5/GRCh37d5.fa \
+# -bamfile "/home/shania.wu/MELT/data/166_120948_chr22.bam" \
+# -t /hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/me_refs/1KGP_Hg19/ALU_MELT.zip \
+# -w ./
+
+
+# rule IndivAnalysis:
+#     input: 
+#     output:
+#     params:
