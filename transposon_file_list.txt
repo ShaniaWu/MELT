@@ -1,0 +1,5 @@
+/hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/me_refs/1KGP_Hg19/ALU_MELT.zip
+/hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/me_refs/1KGP_Hg19/LINE1_MELT.zip
+/hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/me_refs/1KGP_Hg19/SVA_MELT.zip
+
+
