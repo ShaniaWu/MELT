@@ -2,3 +2,4 @@ data/
 logs/
 .DS_Store
 .snakemake
+*.out
