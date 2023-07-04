@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=melt_merged_me
+#SBATCH --job-name=melt
 #SBATCH --time=100:00:00
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem=4G
