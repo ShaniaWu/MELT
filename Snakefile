@@ -11,7 +11,9 @@ rule all:
         # expand("data/{project}/MakeVCF_out/{project}_ALU.final_comp.vcf".format(project=project)),
         # expand("data/{project}/MakeVCF_out/{project}_LINE1.final_comp.vcf".format(project=project)),
         # expand("data/{project}/MakeVCF_out/{project}_SVA.final_comp.vcf".format(project=project))
-        expand("data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz".format(project=project))
+        # expand("data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz".format(project=project))
+        # expand("data/{project}/MakeVCF_out/{project}_MELT_no_symb_allele.vcf".format(project=project))
+        expand("data/{project}/snpeff_out/{project}_MELT_snpeff.vcf".format(project=project))
 
 
 rule Preprocess:
@@ -36,38 +38,39 @@ rule Preprocess:
 
 rule IndivAnalysis:
     input: 
-        bam = "data/{project}/{project}_{sample}.bam",
-        disc = "data/{project}/{project}_{sample}.bam.disc",
-        bai = "data/{project}/{project}_{sample}.bam.disc.bai",
-        fq = "data/{project}/{project}_{sample}.bam.fq"
+        bam = [expand("data/{project}/{project}_{sample}.bam".format(project=project, sample=s)) for s in samples.index],
+        disc = [expand("data/{project}/{project}_{sample}.bam.disc".format(project=project, sample=s)) for s in samples.index],
+        bai = [expand("data/{project}/{project}_{sample}.bam.disc.bai".format(project=project, sample=s)) for s in samples.index],
+        fq = [expand("data/{project}/{project}_{sample}.bam.fq".format(project=project, sample=s)) for s in samples.index]
     output: 
-        final_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam",
-        final_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam.bai",
-        # pulled_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.pulled.sorted.bam",
-        # pulled_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.pulled.sorted.bam.bai",
-        breaks_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.hum_breaks.sorted.bam",
-        breaks_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.hum_breaks.sorted.bam.bai",
+        indiv_dir = directory("data/{project}/IndivAnalysis_out/")
+        # final_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam",
+        # final_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam.bai",
+        # # pulled_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.pulled.sorted.bam",
+        # # pulled_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.pulled.sorted.bam.bai",
+        # breaks_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.hum_breaks.sorted.bam",
+        # breaks_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.hum_breaks.sorted.bam.bai",
 
-        final_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.final.sorted.bam",
-        final_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.final.sorted.bam.bai",
-        # pulled_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.pulled.sorted.bam",
-        # pulled_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.pulled.sorted.bam.bai",
-        breaks_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.hum_breaks.sorted.bam",
-        breaks_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.hum_breaks.sorted.bam.bai",
+        # final_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.final.sorted.bam",
+        # final_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.final.sorted.bam.bai",
+        # # pulled_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.pulled.sorted.bam",
+        # # pulled_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.aligned.pulled.sorted.bam.bai",
+        # breaks_bam_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.hum_breaks.sorted.bam",
+        # breaks_bai_LINE1 = "data/{project}/IndivAnalysis_out/{project}_{sample}.LINE1.hum_breaks.sorted.bam.bai",
 
-        final_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.final.sorted.bam",
-        final_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.final.sorted.bam.bai",
-        # pulled_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.pulled.sorted.bam",
-        # pulled_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.pulled.sorted.bam.bai",
-        breaks_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam",
-        breaks_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam.bai"
+        # final_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.final.sorted.bam",
+        # final_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.final.sorted.bam.bai",
+        # # pulled_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.pulled.sorted.bam",
+        # # pulled_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.pulled.sorted.bam.bai",
+        # breaks_bam_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam",
+        # breaks_bai_SVA = "data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam.bai"
 
     params:
         melt = config["run"]["MELT"],
         genome_ref = config["run"]["genome_ref"],
         element_ref = config["run"]["element_ref"]
     log:
-        "logs/{project}_{sample}.log"
+        "logs/{project}.log"
     conda: 
         "envs/melt.yaml"
     shell:
@@ -84,6 +87,8 @@ rule IndivAnalysis:
 
 rule GroupAnalysis:
     input: 
+        # indiv_dir = [expand("data/{project}/IndivAnalysis_out/".format(project=project))]
+        indiv_dir = "data/{project}/IndivAnalysis_out/"
         # final_bam_ALU = [expand("data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam".format(project=project, sample=s)) for s in samples.index],
         # breaks_bam_ALU = [expand("data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.hum_breaks.sorted.bam".format(project=project, sample=s)) for s in samples.index],
 
@@ -92,7 +97,6 @@ rule GroupAnalysis:
 
         # final_bam_SVA = [expand("data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.aligned.final.sorted.bam".format(project=project, sample=s)) for s in samples.index],
         # breaks_bam_SVA = [expand("data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam".format(project=project, sample=s)) for s in samples.index]
-        "data/{project}/IndivAnalysis_out/"
 
     output: 
         pre_geno_ALU = "data/{project}/GroupAnalysis_out/ALU.pre_geno.tsv",
@@ -112,7 +116,7 @@ rule GroupAnalysis:
         -h {params.genome_ref} \
         -n /hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/add_bed_files/1KGP_Hg19/hg19.genes.bed \
         -t {params.element_ref}\
-        -discoverydir /hpf/largeprojects/ccmbio/swu/MELT/data/{wildcards.project}/IndivAnalysis_out/ \
+        -discoverydir {input.indiv_dir} \
         -w /hpf/largeprojects/ccmbio/swu/MELT/data/{wildcards.project}/GroupAnalysis_out/ 
         '''
 ## Note: cannot add project name as prefix to output name as MELT "Genotype" step looks for specific output file name without any prefixes
@@ -196,8 +200,7 @@ rule MergeVCFs:
         index = "data/{project}/MakeVCF_out/{project}_MELT.vcf.gz.tbi"
 
     params:
-        project = project,
-        element_ref = config["run"]["element_ref"]
+        project = project
     conda: 
         "envs/melt.yaml"
     shell:
@@ -215,12 +218,55 @@ rule FilterVCF:
     output:
         filtered_VCF = "data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz"
     params:
-        project = project,
-        element_ref = config["run"]["element_ref"]
+        project = project
     conda: 
         "envs/melt.yaml"
     shell:
         '''
         bcftools filter -i 'FILTER!="ac0"' {input.merged_VCF} -Oz -o data/{wildcards.project}/MakeVCF_out/{wildcards.project}_MELT_no_ac0.vcf.gz
+        '''
+
+
+rule ReplaceSymbAllele:
+    input: 
+        filtered_VCF = "data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz"
+    output: 
+        noSymbAllele = "data/{project}/MakeVCF_out/{project}_MELT_no_symb_allele.vcf.gz"
+    params:
+        project = project
+    conda: 
+        "envs/melt.yaml"
+    shell:
+        '''
+        PREFIX=`echo {input.filtered_VCF} | sed 's/no_ac0.vcf.gz//'`;
+
+        zcat {input.filtered_VCF} | sed 's/<INS:ME:ALU>/N/g' | sed 's/<INS:ME:LINE1>/N/g' | sed 's/<INS:ME:SVA>/N/g' > "$PREFIX"no_symb_allele.vcf;
+        bgzip "$PREFIX"no_symb_allele.vcf;
+        '''
+
+
+rule snpeff:
+    input: 
+        noSymbAllele = "data/{project}/MakeVCF_out/{project}_MELT_no_symb_allele.vcf.gz"
+    output: 
+        snpeff_VCF = "data/{project}/snpeff_out/{project}_MELT_snpeff.vcf" 
+    params:
+        project = project,
+        snpeff = config["run"]["snpeff"],
+        snpeff_data = config["run"]["snpeff_data"]
+    conda: 
+        "envs/melt.yaml"
+    shell:
+        '''
+        PREFIX=$(echo {input.noSymbAllele} | sed 's/MakeVCF_out/snpeff_out/' | sed 's/no_symb_allele.vcf.gz//')
+
+        {params.snpeff} \
+            -v \
+            -Xms750m -Xmx20g  \
+            -i vcf -o vcf \
+            -dataDir {params.snpeff_data} \
+            GRCh37.75 \
+            -s "data/{project}/snpeff_out/snpEff_summary.html" \
+            {input.noSymbAllele} > "$PREFIX"snpeff.vcf
         '''
 
