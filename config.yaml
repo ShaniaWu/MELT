@@ -1,8 +1,9 @@
 run:
-  project: "HG002"
+  project: "166"
   samples: samples.tsv
   MELT: "/hpf/largeprojects/ccmbio/ccmmarvin_shared/genomes/166/MELT/MELTv2.2.2/MELT.jar"
   genome_ref: "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/genomes/GRCh37d5/GRCh37d5.fa"
   element_ref: "/hpf/largeprojects/ccmbio/swu/MELT/transposon_file_list.txt"
   snpeff: "/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin/snpEff"
+  snpeff_data: "/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/snpeff"
   
