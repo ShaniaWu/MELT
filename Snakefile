@@ -20,9 +20,9 @@ rule Preprocess:
     input:                        
         bam = "data/{project}/{project}_{sample}.bam"
     output: 
-        disc = "data/{project}/{project}_{sample}.bam.disc",
-        bai = "data/{project}/{project}_{sample}.bam.disc.bai",
-        fq = "data/{project}/{project}_{sample}.bam.fq"
+        disc = temp("data/{project}/{project}_{sample}.bam.disc"),
+        bai = temp("data/{project}/{project}_{sample}.bam.disc.bai"),
+        fq = temp("data/{project}/{project}_{sample}.bam.fq")
     params:
         melt = config["run"]["MELT"],
         genome_ref = config["run"]["genome_ref"]
@@ -43,7 +43,7 @@ rule IndivAnalysis:
         bai = [expand("data/{project}/{project}_{sample}.bam.disc.bai".format(project=project, sample=s)) for s in samples.index],
         fq = [expand("data/{project}/{project}_{sample}.bam.fq".format(project=project, sample=s)) for s in samples.index]
     output: 
-        indiv_dir = directory("data/{project}/IndivAnalysis_out/")
+        indiv_dir = temp(directory("data/{project}/IndivAnalysis_out/"))
         # final_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam",
         # final_bai_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.final.sorted.bam.bai",
         # # pulled_bam_ALU = "data/{project}/IndivAnalysis_out/{project}_{sample}.ALU.aligned.pulled.sorted.bam",
@@ -99,9 +99,9 @@ rule GroupAnalysis:
         # breaks_bam_SVA = [expand("data/{project}/IndivAnalysis_out/{project}_{sample}.SVA.hum_breaks.sorted.bam".format(project=project, sample=s)) for s in samples.index]
 
     output: 
-        pre_geno_ALU = "data/{project}/GroupAnalysis_out/ALU.pre_geno.tsv",
-        pre_geno_LINE1 = "data/{project}/GroupAnalysis_out/LINE1.pre_geno.tsv",
-        pre_geno_SVA = "data/{project}/GroupAnalysis_out/SVA.pre_geno.tsv"
+        pre_geno_ALU = temp("data/{project}/GroupAnalysis_out/ALU.pre_geno.tsv"),
+        pre_geno_LINE1 = temp("data/{project}/GroupAnalysis_out/LINE1.pre_geno.tsv"),
+        pre_geno_SVA = temp("data/{project}/GroupAnalysis_out/SVA.pre_geno.tsv")
         
     params:
         melt = config["run"]["MELT"],
@@ -129,9 +129,9 @@ rule Genotype:
         pre_geno_SVA = "data/{project}/GroupAnalysis_out/SVA.pre_geno.tsv",
         bam = "data/{project}/{project}_{sample}.bam"
     output: 
-        genotype_tsv_ALU = "data/{project}/Genotype_out/{project}_{sample}.ALU.tsv",
-        genotype_tsv_LINE1 = "data/{project}/Genotype_out/{project}_{sample}.LINE1.tsv",
-        genotype_tsv_SVA = "data/{project}/Genotype_out/{project}_{sample}.SVA.tsv"
+        genotype_tsv_ALU = temp("data/{project}/Genotype_out/{project}_{sample}.ALU.tsv"),
+        genotype_tsv_LINE1 = temp("data/{project}/Genotype_out/{project}_{sample}.LINE1.tsv"),
+        genotype_tsv_SVA = temp("data/{project}/Genotype_out/{project}_{sample}.SVA.tsv")
     params:
         melt = config["run"]["MELT"],
         genome_ref = config["run"]["genome_ref"],
@@ -158,9 +158,9 @@ rule MakeVCF:
         genotype_tsv_LINE1 =  [expand("data/{project}/Genotype_out/{project}_{sample}.LINE1.tsv".format(project=project, sample=s)) for s in samples.index],
         genotype_tsv_SVA =  [expand("data/{project}/Genotype_out/{project}_{sample}.SVA.tsv".format(project=project, sample=s)) for s in samples.index]
     output: 
-        VCF_ALU = "data/{project}/MakeVCF_out/{project}_ALU.final_comp.vcf.gz",
-        VCF_LINE1 = "data/{project}/MakeVCF_out/{project}_LINE1.final_comp.vcf.gz",
-        VCF_SVA = "data/{project}/MakeVCF_out/{project}_SVA.final_comp.vcf.gz"
+        VCF_ALU = temp("data/{project}/MakeVCF_out/{project}_ALU.final_comp.vcf.gz"),
+        VCF_LINE1 = temp("data/{project}/MakeVCF_out/{project}_LINE1.final_comp.vcf.gz"),
+        VCF_SVA = temp("data/{project}/MakeVCF_out/{project}_SVA.final_comp.vcf.gz")
 
     params:
         melt = config["run"]["MELT"],
@@ -196,8 +196,8 @@ rule MergeVCFs:
         VCF_SVA = "data/{project}/MakeVCF_out/{project}_SVA.final_comp.vcf.gz"
 
     output:
-        merged_VCF = "data/{project}/MakeVCF_out/{project}_MELT.vcf.gz",
-        index = "data/{project}/MakeVCF_out/{project}_MELT.vcf.gz.tbi"
+        merged_VCF = temp("data/{project}/MakeVCF_out/{project}_MELT.vcf.gz"),
+        index = temp("data/{project}/MakeVCF_out/{project}_MELT.vcf.gz.tbi")
 
     params:
         project = project
@@ -216,7 +216,7 @@ rule FilterVCF:
         index = "data/{project}/MakeVCF_out/{project}_MELT.vcf.gz.tbi"
 
     output:
-        filtered_VCF = "data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz"
+        filtered_VCF = temp("data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz")
     params:
         project = project
     conda: 
@@ -231,7 +231,7 @@ rule ReplaceSymbAllele:
     input: 
         filtered_VCF = "data/{project}/MakeVCF_out/{project}_MELT_no_ac0.vcf.gz"
     output: 
-        noSymbAllele = "data/{project}/MakeVCF_out/{project}_MELT_no_symb_allele.vcf.gz"
+        noSymbAllele = temp("data/{project}/MakeVCF_out/{project}_MELT_no_symb_allele.vcf.gz")
     params:
         project = project
     conda: 
@@ -270,3 +270,25 @@ rule snpeff:
             {input.noSymbAllele} > "$PREFIX"snpeff.vcf
         '''
 
+rule MELT_report:
+    input: 
+        snpeff_VCF = "data/{project}/snpeff_out/{project}_MELT_snpeff.vcf" 
+    output: 
+        report = "data/{project}/report_out/{project}_MELT_report.csv" 
+    params:
+        project = project,
+        protein_coding_genes = config["run"]["protein_coding_genes"],
+        hgmd_db = config["run"]["hgmd_db"],
+        exon_bed = config["run"]["exon_bed"],
+        exac = config["run"]["exac"],
+        omim = config["run"]["omim"],
+        gnomad = config["run"]["gnomad"],
+        biomart = config["run"]["biomart"],
+        hpo = config["run"]["hpo_dir"] + project + "_HPO.txt", ###########??
+        sv_counts = config["run"]["sv_counts"]
+
+    conda: 
+        "envs/melt.yaml"
+
+    script:
+        "scripts/MELT_report.py"

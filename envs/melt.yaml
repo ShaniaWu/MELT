@@ -2,7 +2,15 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
+  - python >3.5
   - java-jdk >= 1.8
   - bowtie2
   - bcftools ==1.9
-  - snpeff ==4.3.1t
+  - snpeff ==4.3.1
+  - scikit-allel >1.2
+  - pybedtools >0.8.0
+  - numpy >1.1
+  - bedtools ==2.29.0
+  - bcftools ==1.12
+  - pysam ==0.17.0
+
