@@ -18,7 +18,7 @@ protein_coding_genes = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotatio
 exon_bed = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/exons/hg19_UCSC_exons_canonical.bed"
 exac = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/ExAC/fordist_cleaned_nonpsych_z_pli_rec_null_data.txt"
 omim = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/OMIM_2020-04-09/genemap2.txt"
-gnomad = "gnomad_v2_sv.sites.INS.bed"
+gnomad = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/MELT/gnomad_v2_sv.sites.INS.bed"
 biomart = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/BioMaRt.GrCh37.75.ensembl.mim.hgnc.entrez.txt"
 mssng_manta_counts = "/hpf/largeprojects/ccm_dccforge/dccdipg/Common/annotation/MSSNG_COUNTS/Canadian_MSSNG_parent_SVs.Manta.counts.txt"
 # no INS in LUMPY counts
@@ -39,7 +39,7 @@ def split_Ensembl_ids(id_list):
     return new_list
 
 
-def make_exon_gene_set(protein_coding_genes):
+def make_exon_gene_set(protein_coding_genes): 
     df = pd.read_csv(protein_coding_genes, sep="\t")
     return set(df[df.columns[5]])
 
@@ -191,7 +191,6 @@ def annotate_gnomad(gnomad, sv_df):
 vcf_dict = allel.read_vcf(
     "/hpf/largeprojects/ccmbio/swu/MELT/data/166/snpeff_out/166_MELT_snpeff.vcf",
     ["*"],
-    numbers={"ANN": 1000},
     transformers=allel.ANNTransformer(),
 )
 
